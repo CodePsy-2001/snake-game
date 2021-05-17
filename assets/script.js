@@ -94,7 +94,7 @@ class Snake {
     this.bodyArray = [];
     this.bodyArray.push(new SnakeBody(5, 5));
     this.speed = createVector(1, 0);
-    this.lastControl = RIGHT_ARROW;
+    this.lastKey = RIGHT_ARROW;
     this.lastBody = null;
   }
 
@@ -131,6 +131,7 @@ class Snake {
     this.lastBody = null;
     this.bodyArray.length = 1;
     this.speed.set(0, 0);
+    this.lastKey = null;
   }
 
   dieBorder(){ // 머리를 직전위치로 옮김
@@ -138,25 +139,27 @@ class Snake {
       this.bodyArray.length = 0;
       this.bodyArray.push(this.lastBody);
       this.lastBody = null;
+      this.speed.set(0, 0);
+      this.lastKey = null;
       return;
     }
     this.bodyArray.unshift(this.bodyArray[1]); // 2번째 body를 머리로 만들고 die()
     this.die();
   }
 
-  control(keyCode){
-    if (keyCode === UP_ARROW && this.lastControl !== DOWN_ARROW) {
+  keyPressed(){
+    this.lastKey = keyCode;
+  }
+
+  control(){
+    if (this.lastKey == UP_ARROW && !this.speed.equals(0, 1)) {
       this.speed.set(0, -1);
-      this.lastControl = keyCode;
-    } else if (keyCode === DOWN_ARROW && this.lastControl !== UP_ARROW){
+    } else if (this.lastKey == DOWN_ARROW && !this.speed.equals(0, -1)){
       this.speed.set(0, 1);
-      this.lastControl = keyCode;
-    } else if (keyCode === RIGHT_ARROW && this.lastControl !== LEFT_ARROW){
+    } else if (this.lastKey == RIGHT_ARROW && !this.speed.equals(-1, 0)){
       this.speed.set(1, 0);
-      this.lastControl = keyCode;
-    } else if (keyCode === LEFT_ARROW && this.lastControl !== RIGHT_ARROW){
+    } else if (this.lastKey == LEFT_ARROW && !this.speed.equals(1, 0)){
       this.speed.set(-1, 0);
-      this.lastControl = keyCode;
     }
   }
 
@@ -170,9 +173,13 @@ class Game {
     this.foods = new Foods(3);
     this.snake = new Snake();
   }
-  
-  keyPressed(keyCode){
-    this.snake.control(keyCode);
+
+  keyPressed(){
+    this.snake.keyPressed();
+  }
+
+  control(){
+    this.snake.control();
   }
 
   update(){
@@ -192,6 +199,7 @@ class Game {
   }
 
   show(){
+    console.log(keyCode);
     this.foods.show();
     this.snake.show();
   }
@@ -200,7 +208,7 @@ class Game {
 function setup() {
   createCanvas(constrain(set30mul(windowHeight*0.66), 150, 600),constrain(set30mul(windowHeight*0.66), 150, 600));
   SCL = width/30;
-  frameRate(10);
+  frameRate(15);
   
   game = new Game();
 }
@@ -210,12 +218,13 @@ function windowResized() {
   SCL = width/30;
 }
 
-function draw() {
+function draw() { // frameRate마다 작동
   background(0);
+  game.control();
   game.update();
   game.show();
 }
 
 function keyPressed() {
-  game.keyPressed(keyCode);
+  game.keyPressed();
 }

@@ -96,6 +96,8 @@ class Snake {
     this.speed = createVector(1, 0);
     this.lastKey = RIGHT_ARROW;
     this.lastBody = null;
+    this.sfxEat = loadSound('assets/coin.mp3');
+    //this.sfxDie = loadSound('assets/death.mp3');
   }
 
   get head(){
@@ -124,7 +126,9 @@ class Snake {
   }
 
   eat(){ // lastBody에 기억하고 있던 마지막 요소 추가
+    this.sfxEat.stop();
     this.bodyArray.push(this.lastBody);
+    this.sfxEat.play();
   }
 
   die(){ // 머리만 남김
@@ -132,6 +136,7 @@ class Snake {
     this.bodyArray.length = 1;
     this.speed.set(0, 0);
     this.lastKey = null;
+    //this.sfxDie.play();
   }
 
   dieBorder(){ // 머리를 직전위치로 옮김
@@ -172,6 +177,8 @@ class Game {
   constructor(){
     this.foods = new Foods(3);
     this.snake = new Snake();
+    this.bgm = loadSound('assets/Run_Run_Rottytops.mp3');
+    this.bgm.setLoop(true);
   }
 
   keyPressed(){
@@ -199,10 +206,13 @@ class Game {
   }
 
   show(){
-    console.log(keyCode);
     this.foods.show();
     this.snake.show();
   }
+}
+
+function preload() {
+  game = new Game();
 }
 
 function setup() {
@@ -210,7 +220,7 @@ function setup() {
   SCL = width/30;
   frameRate(15);
   
-  game = new Game();
+  game.bgm.play();
 }
 
 function windowResized() {

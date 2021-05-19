@@ -44,6 +44,10 @@ class Foods {
     this.foodArray = Array.from({ length: num }, () => new Food()); // num 길이의 Food() 배열 생성
   }
 
+  get array(){
+    return this.foodArray;
+  }
+
   show(){
     this.foodArray.forEach(food => food.show());
   }
@@ -194,7 +198,7 @@ class Game {
     if(this.snake.tails.some(tail => this.snake.collideWithSnakeBody(tail))){
       this.snake.die();
     }
-    for(var food of this.foods.foodArray){
+    for(var food of this.foods.array){
       if(this.snake.collideWithFood(food)){
         food.eaten();
         this.snake.eat();

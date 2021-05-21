@@ -181,7 +181,7 @@ class Game {
   constructor(){
     this.foods = new Foods(3);
     this.snake = new Snake();
-    this.bgm = loadSound('assets/Run_Run_Rottytops.mp3');
+    this.bgm = loadSound('assets/main.mp3');
     this.bgm.setLoop(true);
   }
 
